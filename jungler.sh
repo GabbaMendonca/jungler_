@@ -5,9 +5,10 @@
 # ----------------------------------
 EDITOR=vim
 PASSWD=/etc/passwd
+
+# Color
 BRED='\033[0;41;30m'
 STD_BRED='\033[0;0;39m'
-
 
 GREEN='\033[0;32m'
 STD_GREEN='\033[0m'
@@ -15,23 +16,150 @@ STD_GREEN='\033[0m'
 BGREEN='\033[42;1;37m'
 STD_BGREEN='\033[0m'
 
+# patch
+FILE=venv
+
 
 VIRTUALENV=0
 SERVEUP=0
-APP_PID
+APP_PID=0
 
 # ----------------------------------
 # Function
 # ----------------------------------
+
+help_create_app(){
+
+    echo ""
+    echo -e "Em ${BGREEN}setting.py${STD_BGREEN}"
+    echo ""
+    echo -e "${GREEN}Passo 1 : Regirtra o App${STD_GREEN}"
+    echo ""
+    echo -e "No arquivo ${BGREEN}setting.py${STD_BGREEN} registrar o app"
+    echo ""
+    echo ""
+    echo "  INSTALLED_APPS = [  "
+    echo -e "    '${GREEN}${nome_do_projeto}.apps.${nome_do_projeto}Config${STD_GREEN}',"
+    echo "]"
+    echo ""
+    echo ""
+    echo "O nome deve estar igual o da"
+    echo -e "classe que esta no arquivo ${BGREEN}apps.py${STD_BGREEN}"
+    echo "Não esquecer que o nome da deve ter a primeira letra maiuscula"
+    echo ""
+
+    pause
+    
+    echo ""
+    echo -e "Em ${BGREEN}url.py${STD_BGREEN}"
+    echo ""
+    echo -e "${GREEN}Passo 2 : Configurar a rota${STD_GREEN}"
+    echo ""
+    echo -e "No arquivo ${BGREEN}url.py${STD_BGREEN} adicionar o include"
+    echo ""
+    echo ""
+    echo -e "    ${GREEN}from django.urls import path, ${BGREEN}include${STD_BGREEN}${STD_GREEN}"
+    echo ""
+    echo ""
+    echo "Configurar a URL"
+    echo ""
+    echo ""
+    echo -e "    ${GREEN}path('${nome_do_projeto}/', include('${nome_do_projeto}.urls')),${STD_GREEN}"
+    echo ""
+
+    pause
+
+    echo ""
+    echo -e "Em ${BGREEN} ${nome_do_projeto} ${STD_BGREEN}"
+    echo ""
+    echo -e "${GREEN}Passo 3 : Criando o arquivo url.py${STD_GREEN}"
+    echo ""
+    echo -e "No app criado ${BGREEN}${nome_do_projeto}${STD_BGREEN} adicionar o arquivo ${BGREEN}urls.py${STD_BGREEN}"
+    echo ""
+    echo "Inserir os import's"
+    echo ""
+    echo -e "${GREEN}from django.urls import path${STD_GREEN}"
+    echo -e "${GREEN}from . import views${STD_GREEN}"
+    echo ""
+    echo -e "${GREEN}urlpatterns = [${STD_GREEN}"
+    echo -e "    ${GREEN}path('', views.index)${STD_GREEN}"
+    echo -e "${GREEN}]${STD_GREEN}"
+    echo ""
+    echo "  Path('nome_da_url_filha', direciona_para_ a_view.py)"
+    echo ""
+
+    pause
+
+    echo ""
+    echo -e "Em ${BGREEN} ${nome_do_projeto}/views.py${STD_BGREEN}"
+    echo ""
+    echo -e "${GREEN}Passo 4 : Configurando a view${STD_GREEN}"
+    echo ""
+    echo -e "Alterar o arquivo ${BGREEN}views.py${STD_BGREEN}"
+    echo ""
+    echo -e "${GREEN}def index(request):${STD_GREEN}"
+    echo -e "    ${GREEN}return render(request, '${nome_do_projeto}/index.html')${STD_GREEN}"
+    echo ""
+
+    pause
+
+    echo ""
+    echo -e "Em ${BGREEN}${nome_do_projeto}${STD_BGREEN}"
+    echo ""
+    echo -e "${GREEN}Passo 5 : Criando o template${STD_GREEN}"
+    echo ""
+    echo -e "Criar uma pasta chamada : ${BGREEN}templates${STD_BGREEN}"
+    echo -e "Dentro de ${BGREEN}templates${STD_BGREEN} criar uma pasta com o nome do app ${nome_do_projeto}"
+    echo "Dentro dela criar a pagina html. (index)"
+    echo ""
+    echo "|app"
+    echo "├── templates"
+    echo "│   └── ${nome_do_projeto}"
+    echo "│       └── index.html "
+    echo ""
+
+}
+
+# ----------------------------------
+# Function
+# ----------------------------------
+
 pause(){
-  read -p "Pressione [Enter] para continuar..." fackEnterKey
+    read -p "Pressione [Enter] para continuar..." fackEnterKey
+}
+
+exit_(){
+
+    stop_runserver
+    stop_venv
+
+    exit 0
 }
 
 # ----------------------------------
 # Func : Virtualenv
 # ----------------------------------
 
-init_venv(){
+create_venv() {
+    
+    if [ -e !"$FILE" ] ;
+    then
+
+        python3 -m virtualenv venv
+
+    fi
+    
+}
+
+start_venv(){
+    
+    if [ -e !"$FILE" ] ;
+    then
+
+        echo -e "${BRED}Não existe um Virtualenv aqui ...${STD_BRED}"
+        return
+
+    fi
 
     if [ $VIRTUALENV == 0 ];
     then
@@ -64,12 +192,16 @@ stop_venv() {
 }
 
 # ----------------------------------
+# Func : Virtualenv
+# ----------------------------------
+
+# ----------------------------------
 # Func : Server
 # ----------------------------------
 
-runserver(){
+start_runserver(){
     
-    init_venv
+    start_venv
 
     if [ $SERVEUP == 1 ];
     then
@@ -126,14 +258,9 @@ stop_runserver(){
 
 }
 
-exit_(){
-
-    stop_runserver
-    stop_venv
-
-    exit 0
-}
-
+# ----------------------------------
+# Func : Server
+# ----------------------------------
 
 # ----------------------------------
 # Func : Contem as iniciais padrão para inicialiazar o Django
@@ -144,14 +271,14 @@ init(){
     echo ""
 	echo -e "  === ${GREEN}CRIANDO UM VIRTUAL VENV -> python3 -m virtualenv venv${STD_GREEN} ==="
     echo ""
-
-	python3 -m virtualenv venv
+    
+    create_venv
 
     echo ""	
 	echo -e "  === ${GREEN}ACESSANDO O VENV -> source venv/bin/activate${STD_GREEN} ==="
     echo ""
 
-    source venv/bin/activate
+    start_venv
 
     echo ""
 	echo -e "  === ${GREEN}INSTALANDO O DJANGO -> pip install django${STD_GREEN} ==="
@@ -165,32 +292,12 @@ init(){
 
     pip list
 
-    while true
-    do
 
-        echo ""	
-        echo -e "  === ${GREEN}QUAL O NOME DO PROJETO DJANGO ?${STD_GREEN} ==="
-        echo ""	
+    echo ""	
+    echo -e "  === ${GREEN}QUAL O NOME DO PROJETO DJANGO ?${STD_GREEN} ==="
+    echo ""	
 
-        local nome_do_projeto
-        read -p "Insira o nome do projeto : " nome_do_projeto
-
-        echo ""
-
-        local opc_confirma
-        read -p "Confirmar nome do projeto [Y/n] : " opc_confirma
- 
-        case $opc_confirma in
-            'Y') 
-                django-admin startproject $nome_do_projeto .
-                break
-            ;;
-            'n') ;;
-
-            *) echo -e "${BRED}Error...${STD_BRED}" && sleep 2
-        esac
-	
-    done
+    create_project
 
     echo ""
 	echo -e "  === ${GREEN}TUDO PRONTO ! VAMOS TESTAR ? -> python manage.py runserver${STD_GREEN} ==="
@@ -232,7 +339,13 @@ init(){
 
 }
 
+# ----------------------------------
+# Func : App
+# ----------------------------------
+
 create_app(){
+
+    start_venv
 
     while true
     do
@@ -247,14 +360,16 @@ create_app(){
         echo ""
 
         local opc_confirma
-        read -p "Criar App [Y/n] : " opc_confirma
+        read -p "Criar App [Y/n/Q - Quit] : " opc_confirma
  
         case $opc_confirma in
             'Y')
                 python3 manage.py startapp $nome_do_projeto
                 break
             ;;
-            'n') break ;;
+            'n') ;;
+            
+            'Q') return ;;
 
             *) echo -e "${BRED}Error...${STD_BRED}" && sleep 2
         esac
@@ -265,83 +380,11 @@ create_app(){
     echo -e "${GREEN}Pronto ...${STD_GREEN}"
 
     pause
-
-    read -p "Deseja ver as orientações de ajuda para instalar o app ? [Y/n] : " opc_confirma
-
+    
     case $opc_confirma in
         'Y')
             
-            echo ""
-            echo -e "${GREEN}Regirtra o App${STD_GREEN}"
-            echo ""
-            echo ""
-            echo -e "No arquivo ${BGREEN}setting.py${STD_BGREEN} registrar o app"
-            echo ""
-            echo ""
-            echo "  INSTALLED_APPS = [  "
-            echo -e "    '${GREEN}${nome_do_projeto}.apps.${nome_do_projeto}Config${STD_GREEN}',"
-            echo "]"
-            echo ""
-            echo ""
-            echo "O nome deve estar igual o da"
-            echo -e "classe que esta no arquivo ${BGREEN}apps.py${STD_BGREEN}"
-            echo ""
-
-            pause
-            
-            echo ""
-            echo -e "${GREEN}Configura a rota${STD_GREEN}"
-            echo ""
-            echo -e "No arquivo ${BGREEN}url.py${STD_BGREEN} adicionar o include"
-            echo ""
-            echo ""
-            echo -e "    ${GREEN}from django.urls import path, ${BGREEN}include${STD_BGREEN}${STD_GREEN}"
-            echo ""
-            echo ""
-            echo "Configurar a URL"
-            echo ""
-            echo ""
-            echo -e "    ${GREEN}path('${nome_do_projeto}/', include('${nome_do_projeto}.urls')),${STD_GREEN}"
-            echo ""
-
-            pause
-
-            echo ""
-            echo -e "No app criado ${nome_do_projeto} ${BGREEN}adicionar ${STD_BGREEN}o arquivo ${BGREEN}urls.py${STD_BGREEN}"
-            echo ""
-            echo "Inserir os import's"
-            echo ""
-            echo -e "${GREEN}from django.urls import path${STD_GREEN}"
-            echo -e "${GREEN}from . import views${STD_GREEN}"
-            echo ""
-            echo -e "${GREEN}urlpatterns = [${STD_GREEN}"
-            echo -e "    ${GREEN}path('', views.index)${STD_GREEN}"
-            echo -e "${GREEN}]${STD_GREEN}"
-            echo ""
-            echo "  Path('nome_da_url_filha', arquivo_para _onde_ser_direcionado_a_chamada)"
-            echo ""
-
-            pause
-
-            echo ""
-            echo -e "Alterar o arquivo ${BGREEN}views.py${STD_BGREEN}"
-            echo ""
-            echo -e "${GREEN}def index(request):${STD_GREEN}"
-            echo -e "    ${GREEN}return render(request, '${nome_do_projeto}/index.html')${STD_GREEN}"
-            echo ""
-
-            pause
-
-            echo ""
-            echo -e "Criar uma pasta chamada : ${BGREEN}templates${STD_BGREEN}"
-            echo -e "Dentro de ${BGREEN}templates${STD_BGREEN} criar uma pasta com o nome do app ${nome_do_projeto}"
-            echo "Dentro dela criar a pagina html. (index)"
-            echo ""
-            echo "|app"
-            echo "├── templates"
-            echo "│   └── page/app "
-            echo "│       └── index.html "
-            echo ""
+            help_create_app
 
         ;;
         'n') ;;
@@ -352,28 +395,31 @@ create_app(){
     pause
 
 }
+
+# ----------------------------------
+# Func : App
+# ----------------------------------
+
+# ----------------------------------
+# Func : Project
+# ----------------------------------
  
-
-# ----------------------------------
-# Func One : Contem as iniciais padrão para inicialiazar o Django
-# ----------------------------------
-
 create_project(){
 	
     while true
     do
 
-        echo "  Insira o nome do projeto "
-
         local nome_do_projeto
-        read nome_do_projeto
+        read -p "Insira o nome do projeto : " nome_do_projeto
+
+        echo ""
 
         local opc_confirma
-        read -p "Confirmar nome do projeto [Y/n]" opc_confirma
+        read -p "Confirmar nome do projeto [Y/n] : " opc_confirma
  
         case $opc_confirma in
             'Y') 
-                django-admin startproject $nome_do_projeto.
+                django-admin startproject $nome_do_projeto .
                 break
             ;;
             'n') ;;
@@ -381,8 +427,27 @@ create_project(){
             *) echo -e "${BRED}Error...${STD_BRED}" && sleep 2
         esac
 	
-    done    
-        pause
+    done
+
+}
+
+# ----------------------------------
+# Func : Project
+# ----------------------------------
+
+
+testando(){
+    python3 script.py
+
+    FILE=venv
+    
+    if [ -e !"$FILE" ] ; then
+        echo "o arquivo bbb existe"
+    else
+        echo "o arquivo bbb não existe"
+    fi
+
+    pause
 }
 
 
@@ -405,30 +470,34 @@ show_menus() {
     echo "~~~~~~~~~~~~~~~~~~~~~~~~~"	
 	echo "       - M E N U -       "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~"
-	echo "  1. Instalando e iniciando um projeto Django"
-	echo "  2. Criar um app"
+	echo "  1. Django - Instalando e iniciando um projeto"
+	echo "  2. Django - Criar um app"
     echo "" 
-	echo "  5. Subir/Reload Servidor de teste"
-	echo "  6. Parar Servidor de teste"
+	echo "  5. Server - Iniciar/Reload"
+	echo "  6. Server - Parar"
     echo "" 
-	echo "  8. Ativa o VirtualEnv"
-	echo "  9. Desativa o VirtualEnv"
+	echo "  7. VirtualEnv - Criar"
+	echo "  8. VirtualEnv - Ativar"
+	echo "  9. VirtualEnv - Desativar"
+    echo "" 
+	echo "  10. Ajuda"
     echo "" 
 	echo "  0. Exit"
 }
 
 read_options(){
 	local choice
-	read -p "Enter choice [ 1 - 3 ] " choice
+	read -p "Digite uma opção : " choice
 	case $choice in
 		0) exit_ ;;
         
         1) init ;;
 		2) create_app ;;
+		3) testando ;;
 
 		# Server
         5) 
-            runserver
+            start_runserver
             pause 
         ;;
         6)
@@ -437,14 +506,20 @@ read_options(){
         ;;
 
         # Venv
+        7) 
+            create_venv
+            pause
+        ;;
         8) 
-            init_venv
+            start_venv
             pause
         ;;
         9) 
             stop_venv
             pause
         ;;
+
+        10) help_create_app ;;
 
 
 		*) echo -e "${BRED}Error...${STD_BRED}" && sleep 2
