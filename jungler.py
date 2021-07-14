@@ -1,9 +1,32 @@
+import os
+
+
+# ----------------------------------
+# Execute commands shell -> https://wiki.python.org.br/PythonNoLugarDeShellScript
+# ----------------------------------
+class Cammand(object):
+    def __init__(self, cmd):
+        self.cmd = cmd
+    def __call__(self, *args):
+        return os.system("%s %s" % (self.cmd, " ".join(args)))
+
+class Shell(object):
+    def __getattr__(self, attribute):
+        return Cammand(attribute)
+
+
+
 # commands terminal
 def clear():
-    ...
+    s = Shell()
+    s.clear()
 
 def pause():
     input("Pressione [Enter] para continuar...")
+
+def exit_():
+    
+    exit()
 
 # ----------------------------------
 # Function to display menus
@@ -48,13 +71,13 @@ def read_options():
     
     choice = input("Digite uma opção : ")
     
-    if choice == 0:
+    if choice == "0":
+        exit_()
+    
+    elif choice == "1":
         ...
     
-    elif choice == 1:
-        ...
-    
-    elif choice == 2:
+    elif choice == "2":
         ...
     
     else:
