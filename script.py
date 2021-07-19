@@ -12,41 +12,66 @@
 
 # print(os.path.exists("venv"))
 
-import shutil, tempfile
+#============================
 
 
-encontrado = False
+# import shutil, tempfile
 
-with open('gabba/settings.py', 'r+') as arquivo, \
-    tempfile.NamedTemporaryFile('w', delete=False) as out:
+
+# encontrado = False
+
+# with open('gabba/settings.py', 'r+') as arquivo, \
+#     tempfile.NamedTemporaryFile('w', delete=False) as out:
     
-    for linha in arquivo:
+#     for linha in arquivo:
 
-        if linha.find("INSTALLED_APPS") >= 0:
+#         if linha.find("INSTALLED_APPS") >= 0:
 
-            encontrado = True
+#             encontrado = True
 
-            out.write(str(linha))
+#             out.write(str(linha))
 
-        else:
+#         else:
             
-            if encontrado:
+#             if encontrado:
 
-                if linha.find("]") >= 0:
+#                 if linha.find("]") >= 0:
 
-                    out.write("    'gabba',\n" )
-                    out.write("]\n")
+#                     out.write("    'gabba',\n" )
+#                     out.write("]\n")
                     
-                    encontrado = False
+#                     encontrado = False
 
-                else:
+#                 else:
 
-                    out.write(str(linha))
+#                     out.write(str(linha))
 
-            else:
-
-
-                out.write(str(linha))
+#             else:
 
 
-shutil.move(out.name, 'gabba/testando.py')
+#                 out.write(str(linha))
+
+
+# shutil.move(out.name, 'gabba/testando.py')
+
+
+#============================
+
+
+import pickle
+
+# with open('cards','wb') as f:
+#     dump({'Dan':['Warrior',500,1,0],'Jim':['dragonfly',300,2,10],'Somo':['cosmonaut',490,3,65]},f)
+
+with open('gabba/settings.py','rb') as g:
+    id_cards = pickle.load(g)
+print ('id_cards before change==', id_cards)
+
+# id_cards['Jim'][0] = 'Wizard'
+
+# with open('cards','w') as h:
+#     dump(id_cards,h)
+
+# with open('cards') as e:
+#     id_cards = load(e)
+# print '\nid_cards after change==',id_cards

@@ -1,0 +1,16 @@
+[ ] Inicializar o Django
+ - [x] Instalar o Django - pip install django
+ - [x] Criar um projeto Django
+ - [ ] Configurar o Django no arquivo settings.py
+
+[ ] Server teste do Django
+ - [x] Start server
+ - [ ] Informar outra porta
+
+[ ] Criar um App
+ - [x] Criar o App
+ - [ ] Instalar o app no settings.py
+ - [ ] Configurar a rota no urls.py do projeto
+ - [ ] Criar um arquivo urls.py no app criado 
+ - [ ] Alterar o arquivo views.py 
+ - [ ] Criar a pasta template
